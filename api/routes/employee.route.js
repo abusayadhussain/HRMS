@@ -1,5 +1,7 @@
 module.exports = app => {
     const employees = require("../controllers/employee.controller");
+    const csvController = require("../controllers/csv.controller");
+    const upload = require("../middleware/upload.middleware");
 
     var router = require("express").Router();
 
@@ -20,6 +22,9 @@ module.exports = app => {
 
     // Delete all Employees
     router.delete("/", employees.deleteAll);
+
+    //upload csv of employees
+    router.post("/upload", upload.single("file"), csvController.upload);
 
     app.use('/api/employees', router);
 };

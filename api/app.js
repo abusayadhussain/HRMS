@@ -4,6 +4,9 @@ const db = require("./models");
 
 const app = express();
 
+global.__basedir = __dirname + "/";
+
+
 app.use(cors());
 
 // parse requests of content-type - application/json
@@ -13,9 +16,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //syncing sequelize
-db.sequelize.sync({ force: true }).then(() => {
-    console.log("Drop and re-sync db.");
-});
+db.sequelize.sync();
+// db.sequelize.sync({ force: true }).then(() => {
+//     console.log("Drop and re-sync db.");
+// });
 
 // simple route
 app.get("/", (req, res) => {
