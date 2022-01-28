@@ -37,7 +37,6 @@ const { getPagination, getPagingData } = require('../helpers/pagination.helper')
 exports.findAll = (req, res) => {
     const {page, size, email} = req.query;
     let condition = email ? { email: { [Op.like]: `%${email}%` } } : null;
-
     const { limit, offset } = getPagination(page, size);
     Employee.findAndCountAll({ where: condition, limit, offset })
         .then(data => {

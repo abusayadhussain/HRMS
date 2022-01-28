@@ -28,6 +28,19 @@ class EmployeeDataService {
     findByEmail(email) {
         return http.get(`/employees?email=${email}`);
     }
+
+    upload(file, onUploadProgress) {
+        let formData = new FormData();
+
+        formData.append("file", file);
+
+        return http.post("/employees/upload", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+            onUploadProgress,
+        });
+    }
 }
 
 export default new EmployeeDataService();
