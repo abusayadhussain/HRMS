@@ -124,7 +124,6 @@ exports.delete = (req, res) => {
     }
 
 // Delete all Tutorials from the database.
-exports.deleteAll = (req, res) => {
     exports.deleteAll = (req, res) => {
         Employee.destroy({
             where: {},
@@ -140,4 +139,3 @@ exports.deleteAll = (req, res) => {
                 });
             });
     };
-};
