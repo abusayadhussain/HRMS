@@ -26,5 +26,8 @@ module.exports = app => {
     //upload csv of employees
     router.post("/upload", upload.single("file"), csvController.upload);
 
+    //Send Mail to employees
+    router.post('/send-mail', employees.sendMail)
+
     app.use('/api/employees', router);
 };

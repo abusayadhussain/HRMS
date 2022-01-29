@@ -4,6 +4,9 @@ const db = require("./models");
 
 const app = express();
 
+require('dotenv').config()
+
+
 global.__basedir = __dirname + "/";
 
 

@@ -1,4 +1,5 @@
 const db = require("../models");
+const nodemailer = require('nodemailer');
 const Employee = db.employees;
 const Op = db.Sequelize.Op;
 const { getPagination, getPagingData } = require('../helpers/pagination.helper');
@@ -97,7 +98,46 @@ exports.update = (req, res) => {
         });
 };
 
-// Delete a Tutorial with the specified id in the request
+//Send mail to selected users
+exports.sendMail = (req, res) => {
+    let transport = nodemailer.createTransport({
+        host: 'smtp.mailtrap.io',
+        port: 2525,
+        auth: {
+            user: process.env.USERNAME,
+            pass: process.env.PASSWORD
+        }
+    });
+    const mailList = [];
+    let mails = req.body.to;
+    mails.map((mail)=> {
+        mailList.push(mail)
+    });
+    mailList.push();
+    const message = {
+        from: process.env.FROMMAIL, // Sender address
+        to: mailList,         // List of recipients
+        subject: req.body.subject, // Subject line
+        html: `
+               <h3> Message from HRMS <h3>
+                <p> ${ req.body.body } <p>
+` // html body
+    };
+    transport.sendMail(message, function(err, info) {
+        if (err) {
+            res.send({
+                message: `Mail not sent to employee.`
+            });
+            console.log(err)
+        } else {
+            res.send({
+                message: "Mail sent to Employee successfully."
+            })
+        }
+    });
+}
+
+// Delete a Employee with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
 
