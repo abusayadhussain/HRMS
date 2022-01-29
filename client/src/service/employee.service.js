@@ -41,6 +41,10 @@ class EmployeeDataService {
             onUploadProgress,
         });
     }
+
+    sendMail(mailBody){
+        return http.post("/employees/send-mail",mailBody)
+    }
 }
 
 export default new EmployeeDataService();

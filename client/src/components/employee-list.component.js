@@ -2,12 +2,55 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import  {useTable}  from "react-table";
 import Pagination from "@material-ui/lab/Pagination";
 import EmployeeDataService from '../service/employee.service';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { trackPromise } from 'react-promise-tracker';
+import { usePromiseTracker } from "react-promise-tracker";
+import { Watch } from 'react-loader-spinner';
+
+const LoadingIndicator = props => {
+    const { promiseInProgress } = usePromiseTracker();
+    return (
+        promiseInProgress &&
+        <div
+     style={{
+                width: "100%",
+                    height: "100",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+              }}
+        >
+      <Watch heigth="75"
+             width="75"
+             ariaLabel='loading'
+             color="#008080"
+      />
+            </div>
+    );
+}
 
 const EmployeeList = (props) => {
+    const initialMailBody = {
+        subject: "",
+        body: ""
+    };
+    const [currentMailBody, setCurrentMailBody] = useState(initialMailBody);
     const [employees, setEmployees] = useState([]);
     const [searchEmail, setSearchEmail] = useState("");
     const [file, setFile] = useState();
     const [fileName, setFileName] = useState("");
+    const [isChecked, setIsChecked] = useState(false);
+    const [checkedBoxValue, setCheckedBoxValue] = useState([]);
+    const [open, setOpen] = React.useState(false);
+    const [message, setMessage] = useState("");
+    const [submitted, setSubmitted] = useState(false);
+
 
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(0);
@@ -15,9 +58,12 @@ const EmployeeList = (props) => {
 
     const pageSizes = [5, 10, 15];
     const employeesRef = useRef();
+    const checkboxRef = useRef("");
+    const checkedBoxEmailRef = useRef([]);
 
 
     employeesRef.current = employees;
+
 
     const saveFile = (e) => {
         setFile(e.target.files[0]);
@@ -66,6 +112,7 @@ const EmployeeList = (props) => {
     useEffect(retrieveEmployees, [page, pageSize]);
 
 
+
     const refreshList = () => {
         retrieveEmployees();
     };
@@ -101,6 +148,29 @@ const EmployeeList = (props) => {
         setPageSize(event.target.value);
         setPage(1);
     };
+    let mails = [];
+    const handleOnChange = (event) => {
+        const mail = event.target.id;
+        console.log(event.target.id);
+        mails.push(mail);
+        setIsChecked(checkboxRef.current.checked)
+        if(event.target.checked === true){
+            setCheckedBoxValue(checkedBoxEmailRef.current.concat(mails));
+        }
+    };
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleInputChange = event => {
+        const { name, value } = event.target;
+        setCurrentMailBody({ ...currentMailBody, [name]: value });
+    };
 
     const openEmployee = (rowIndex) => {
         const id = employeesRef.current[rowIndex].id;
@@ -125,6 +195,24 @@ const EmployeeList = (props) => {
             });
     };
 
+    const sendMail = () => {
+        let mailBody = {
+            to: checkedBoxValue,
+            subject: currentMailBody.subject,
+            body: currentMailBody.body,
+        }
+        trackPromise(
+        EmployeeDataService.sendMail(mailBody)
+            .then(res=>{
+                setMessage("Mail send to selected employees successfully!");
+                setSubmitted(true)
+
+            })
+            .catch(e => {
+                console.log(e);
+            })
+    )
+    }
     const upload = async () => {
         try {
             EmployeeDataService.upload(file).then((response)=>{
@@ -134,6 +222,11 @@ const EmployeeList = (props) => {
         } catch (ex) {
             console.log(ex);
         }
+    };
+
+    const newMailBody = () => {
+        setCurrentMailBody(initialMailBody);
+        setSubmitted(false);
     };
 
     const columns = useMemo(
@@ -155,9 +248,18 @@ const EmployeeList = (props) => {
             accessor: "actions",
             Cell: (props) => {
                 const rowIdx = props.row.id;
+                const rowEmail = props.row.cells[0].row.original.email;
                 return (
                     <div>
-                        <span  onClick={() => openEmployee(rowIdx)}>
+                        <span>
+                            <input
+                                id={rowEmail}
+                                type="checkbox"
+                                ref={checkboxRef}
+                                onChange={handleOnChange}
+                            />
+                        </span>
+                        <span  className="pad-left" onClick={() => openEmployee(rowIdx)}>
                             <i className="fas fa-pen"></i>
                         </span>
 
@@ -271,6 +373,74 @@ const EmployeeList = (props) => {
                     <button className="btn btn-sm btn-danger" onClick={removeAllEmployees}>
                         Remove All
                     </button>
+                    <button className="btn btn-sm btn-success" onClick={handleClickOpen}>
+                        Send Mail
+                    </button>
+                    <Dialog open={open} onClose={handleClose}>
+                        <DialogTitle>MailBox</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Send Emails To selected employees
+                            </DialogContentText>
+                            <div className="submit-form">
+                                {submitted ? (
+                                    <div>
+                                        <h4>{message}</h4>
+                                        <button className="btn btn-success" onClick={newMailBody}>
+                                            Send Mail
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <div className="form-group">
+                                            <label htmlFor="to">To</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="to"
+                                                required
+                                                value={checkedBoxValue}
+                                                onChange={handleInputChange}
+                                                name="subject"
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label htmlFor="subject">Subject</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="subject"
+                                                required
+                                                value={currentMailBody.subject}
+                                                onChange={handleInputChange}
+                                                name="subject"
+                                            />
+                                        </div>
+
+                                        <div className="form-group mb-2">
+                                            <label htmlFor="body">body</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="body"
+                                                required
+                                                value={currentMailBody.body}
+                                                onChange={handleInputChange}
+                                                name="body"
+                                            />
+                                        </div>
+                                    </div>)
+                                }
+                            </div>
+                            <LoadingIndicator/>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button onClick={sendMail}>Send Mail</Button>
+                        </DialogActions>
+                    </Dialog>
+
                 </div>
             </div>
 );
