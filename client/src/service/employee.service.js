@@ -1,8 +1,8 @@
 import http from "../helpers/api-call.helper";
 
 class EmployeeDataService {
-    getAll() {
-        return http.get("/employees");
+    getAll(params) {
+        return http.get("/employees", { params });
     }
 
     get(id) {

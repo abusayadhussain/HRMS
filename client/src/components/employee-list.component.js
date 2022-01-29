@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import  {useTable}  from "react-table";
+import Pagination from "@material-ui/lab/Pagination";
 import EmployeeDataService from '../service/employee.service';
-import Pagination from './pagination.component'
 
 const EmployeeList = (props) => {
     const [employees, setEmployees] = useState([]);
@@ -9,15 +9,15 @@ const EmployeeList = (props) => {
     const [file, setFile] = useState();
     const [fileName, setFileName] = useState("");
 
+    const [page, setPage] = useState(1);
+    const [count, setCount] = useState(0);
+    const [pageSize, setPageSize] = useState(5);
+
+    const pageSizes = [5, 10, 15];
     const employeesRef = useRef();
 
 
     employeesRef.current = employees;
-
-
-    useEffect(() => {
-        retrieveEmployees();
-    }, []);
 
     const saveFile = (e) => {
         setFile(e.target.files[0]);
@@ -33,7 +33,7 @@ const EmployeeList = (props) => {
         let params = {};
 
         if (searchEmail) {
-            params["title"] = searchEmail;
+            params["emial"] = searchEmail;
         }
 
         if (page) {
@@ -47,14 +47,24 @@ const EmployeeList = (props) => {
         return params;
     }
     const retrieveEmployees = () => {
-        EmployeeDataService.getAll()
+        const params = getRequestParams(searchEmail, page, pageSize);
+
+        EmployeeDataService.getAll(params)
             .then((response) => {
-                setEmployees(response.data.items);
+                const employees  = response.data.items;
+                const totalPages = response.data.totalPages;
+                setEmployees(employees);
+                setCount(totalPages);
+
+
             })
             .catch((e) => {
                 console.log(e);
             });
     };
+
+    useEffect(retrieveEmployees, [page, pageSize]);
+
 
     const refreshList = () => {
         retrieveEmployees();
@@ -72,13 +82,24 @@ const EmployeeList = (props) => {
     };
 
     const findByEmail = () => {
-        EmployeeDataService.findByEmail(searchEmail)
-            .then((response) => {
-                setEmployees(response.data.items);
-            })
-            .catch((e) => {
-                console.log(e);
-            });
+        // EmployeeDataService.findByEmail(searchEmail)
+        //     .then((response) => {
+        //         setEmployees(response.data.items);
+        //     })
+        //     .catch((e) => {
+        //         console.log(e);
+        //     });
+        setPage(1);
+        retrieveEmployees();
+    };
+
+    const handlePageChange = (event, value) => {
+        setPage(value);
+    };
+
+    const handlePageSizeChange = (event) => {
+        setPageSize(event.target.value);
+        setPage(1);
     };
 
     const openEmployee = (rowIndex) => {
@@ -115,10 +136,7 @@ const EmployeeList = (props) => {
         }
     };
 
-
-
-
-        const columns = useMemo(
+    const columns = useMemo(
         () => [
         {
             Header: "First Name",
@@ -226,6 +244,27 @@ const EmployeeList = (props) => {
                         })}
                         </tbody>
                     </table>
+                    <div className="mt-3">
+                        {"Items per Page: "}
+                        <select onChange={handlePageSizeChange} value={pageSize}>
+                            {pageSizes.map((size) => (
+                                <option key={size} value={size}>
+                                    {size}
+                                </option>
+                            ))}
+                        </select>
+
+                        <Pagination
+                            className="my-3"
+                            count={count}
+                            page={page}
+                            siblingCount={1}
+                            boundaryCount={1}
+                            variant="outlined"
+                            shape="rounded"
+                            onChange={handlePageChange}
+                        />
+                    </div>
                 </div>
 
                 <div className="col-md-8">

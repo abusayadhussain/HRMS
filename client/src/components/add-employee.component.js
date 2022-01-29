@@ -17,7 +17,7 @@ const AddEmployee = () => {
     };
 
     const saveEmployee = () => {
-        var data = {
+        let data = {
             firstName: employee.firstName,
             lastName: employee.lastName,
             email: employee.email
