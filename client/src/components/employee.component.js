@@ -100,7 +100,7 @@ const Employee = props => {
                     </button>
                     <button
                             type="submit"
-                            className="btn btn-primary"
+                            className="btn btn-warning"
                             onClick={updateEmployee}
                         >
                             Update

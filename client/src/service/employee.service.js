@@ -21,14 +21,6 @@ class EmployeeDataService {
         return http.delete(`/employees/${id}`);
     }
 
-    deleteAll() {
-        return http.delete(`/employees`);
-    }
-
-    findByEmail(email) {
-        return http.get(`/employees?email=${email}`);
-    }
-
     upload(file, onUploadProgress) {
         let formData = new FormData();
 

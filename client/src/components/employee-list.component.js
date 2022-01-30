@@ -3,7 +3,6 @@ import  {useTable}  from "react-table";
 import Pagination from "@material-ui/lab/Pagination";
 import EmployeeDataService from '../service/employee.service';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -18,20 +17,21 @@ const LoadingIndicator = props => {
     return (
         promiseInProgress &&
         <div
-     style={{
+            style={{
                 width: "100%",
-                    height: "100",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center"
-              }}
+                height: "100",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+            }}
         >
-      <Watch heigth="75"
-             width="75"
-             ariaLabel='loading'
-             color="#008080"
+      <Watch
+          heigth="75"
+          width="75"
+          ariaLabel='loading'
+          color="#008080"
       />
-            </div>
+        </div>
     );
 }
 
@@ -92,6 +92,7 @@ const EmployeeList = (props) => {
 
         return params;
     }
+
     const retrieveEmployees = () => {
         const params = getRequestParams(searchEmail, page, pageSize);
         EmployeeDataService.getAll(params)
@@ -109,21 +110,8 @@ const EmployeeList = (props) => {
 
     useEffect(retrieveEmployees, [page, pageSize]);
 
-
-
     const refreshList = () => {
         retrieveEmployees();
-    };
-
-    const removeAllEmployees = () => {
-        EmployeeDataService.deleteAll()
-            .then((response) => {
-                console.log(response.data.items);
-                refreshList();
-            })
-            .catch((e) => {
-                console.log(e);
-            });
     };
 
     const findByEmail = () => {
@@ -140,6 +128,7 @@ const EmployeeList = (props) => {
         setPageSize(event.target.value);
         setPage(1);
     };
+
     let mails = [];
     const handleOnChange = (event) => {
         const mail = event.target.id;
@@ -205,6 +194,7 @@ const EmployeeList = (props) => {
             })
     )
     }
+
     const upload = async () => {
         try {
             EmployeeDataService.upload(file).then((response)=>{
@@ -279,7 +269,6 @@ const EmployeeList = (props) => {
         columns,
         data: employees,
     });
-
 
     return (
         <div className="list row">
@@ -364,9 +353,6 @@ const EmployeeList = (props) => {
                 </div>
 
                 <div className="col-md-8">
-                    <button className="btn btn-sm btn-danger" onClick={removeAllEmployees}>
-                        Remove All
-                    </button>
                     <button className="btn btn-sm btn-success" onClick={handleClickOpen}>
                         Send Mail
                     </button>

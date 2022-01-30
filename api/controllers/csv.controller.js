@@ -22,21 +22,12 @@ exports.upload = async (req, res) => {
                 employees.push(row);
             })
             .on("end", () => {
-                // Employee.bulkCreate(employees)
-                //     .then(() => {
-                //         res.status(200).send({
-                //             message:
-                //                 "Uploaded the file successfully: " + req.file.originalname,
-                //         });
-                //
-                //     })
                 let countSuccess = 0;
                 let countError = 0;
                 let count = 0;
                 employees.map( async employee => {
                     try{
                         const createEmployee = await Employee.create(employee);
-                        console.log('createEmployee-------->', createEmployee.dataValues);
                         if(createEmployee.dataValues){
                             countSuccess++
                             count++;
@@ -63,7 +54,3 @@ exports.upload = async (req, res) => {
         });
     }
 };
-
-
-
-// module.exports = upload;
