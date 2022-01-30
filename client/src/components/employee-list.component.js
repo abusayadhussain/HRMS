@@ -43,8 +43,6 @@ const EmployeeList = (props) => {
     const [currentMailBody, setCurrentMailBody] = useState(initialMailBody);
     const [employees, setEmployees] = useState([]);
     const [searchEmail, setSearchEmail] = useState("");
-    const [file, setFile] = useState();
-    const [fileName, setFileName] = useState("");
     const [isChecked, setIsChecked] = useState(false);
     const [checkedBoxValue, setCheckedBoxValue] = useState([]);
     const [open, setOpen] = React.useState(false);
@@ -64,11 +62,6 @@ const EmployeeList = (props) => {
 
     employeesRef.current = employees;
 
-
-    const saveFile = (e) => {
-        setFile(e.target.files[0]);
-        setFileName(e.target.files[0].name);
-    };
 
     const onChangeSearchEmail = (e) => {
         const searchEmail = e.target.value;
@@ -110,9 +103,6 @@ const EmployeeList = (props) => {
 
     useEffect(retrieveEmployees, [page, pageSize]);
 
-    const refreshList = () => {
-        retrieveEmployees();
-    };
 
     const findByEmail = () => {
         getRequestParams(searchEmail);
@@ -194,19 +184,6 @@ const EmployeeList = (props) => {
             })
     )
     }
-
-    const upload = async () => {
-        try {
-            EmployeeDataService.upload(file).then((response)=>{
-                console.log(response.data);
-                alert(response.data.message);
-                window.location.reload();
-                refreshList();
-            })
-        } catch (ex) {
-            console.log(ex);
-        }
-    };
 
     const newMailBody = () => {
         setCurrentMailBody(initialMailBody);
@@ -292,12 +269,6 @@ const EmployeeList = (props) => {
                         </div>
                     </div>
                 </div>
-            <div className="col-md-4">
-                <div className="input-group mb-3">
-                    <input type="file" onChange={saveFile} />
-                    <button onClick={upload}>Upload</button>
-                </div>
-            </div>
                 <div className="col-md-12 list">
                     <table
                         className="table table-striped table-bordered"

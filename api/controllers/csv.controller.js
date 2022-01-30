@@ -40,7 +40,7 @@ exports.upload = async (req, res) => {
 
                     if(employees.length === count){
                         res.status(200).send({
-                            message: `${countSuccess} employee record saved to database. ${countError} failed to save`,
+                            message: `${countSuccess} employee record(s) saved to database. ${countError} record(s) failed to save`,
                         });
                     }
                 });

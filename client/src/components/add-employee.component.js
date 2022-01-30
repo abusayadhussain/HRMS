@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import EmployeeDataService from '../service/employee.service';
+import UploadFiles from "./upload-files.component";
 
 const AddEmployee = () => {
     const initialEmployeeState = {
@@ -37,9 +38,7 @@ const AddEmployee = () => {
                         lastName: response.data.lastName,
                         email: response.data.email
                     });
-                    console.log(response);
                     setSubmitted(true);
-                    console.log(response.data);
                 }
             })
             .catch(e => {
@@ -106,6 +105,8 @@ const AddEmployee = () => {
                     <div>
                         { message ? message: null }
                     </div>
+                    <h3 className="align-center">OR</h3>
+                    <UploadFiles />
                     <button onClick={saveEmployee} className="btn btn-success">
                         Submit
                     </button>
