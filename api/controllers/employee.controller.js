@@ -52,7 +52,7 @@ exports.findAll = (req, res) => {
     const {page, size, email} = req.query;
     let condition = email ? { email: { [Op.like]: `%${email}%` } } : null;
     const { limit, offset } = getPagination(page, size);
-    Employee.findAndCountAll({ where: condition, limit, offset })
+    Employee.findAndCountAll({ where: condition, order:[['id', 'DESC']], limit, offset })
         .then(data => {
             const response = getPagingData(data, page, limit);
             res.send(response);
