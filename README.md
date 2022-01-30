@@ -36,3 +36,4 @@ First go to the client folder then simply by running
 ## Additional
 - For APi there is .env-example file. Those fields are required except PORT to setup configuration for mail trap
 - There is a employee.csv file at core that is example csv file, to upload the employee info
+- Upload csv file temporary folder path api/resources/statc/assets/uploads 
