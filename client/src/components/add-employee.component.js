@@ -90,7 +90,7 @@ const AddEmployee = () => {
                         />
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-group mb-2">
                         <label htmlFor="email">Email (Required)</label>
                         <input
                             type="email"
@@ -102,14 +102,14 @@ const AddEmployee = () => {
                             name="email"
                         />
                     </div>
-                    <div>
-                        { message ? message: null }
-                    </div>
-                    <h3 className="align-center">OR</h3>
-                    <UploadFiles />
                     <button onClick={saveEmployee} className="btn btn-success">
                         Submit
                     </button>
+                    <div className="align-center">
+                        <h3>OR</h3>
+                        <h5>Add Employees with CSV file</h5>
+                        <UploadFiles />
+                    </div>
                 </div>
             )}
         </div>
