@@ -79,7 +79,7 @@ const EmployeeList = (props) => {
         let params = {};
 
         if (searchEmail) {
-            params["emial"] = searchEmail;
+            params["email"] = searchEmail;
         }
 
         if (page) {
@@ -94,19 +94,17 @@ const EmployeeList = (props) => {
     }
     const retrieveEmployees = () => {
         const params = getRequestParams(searchEmail, page, pageSize);
-
         EmployeeDataService.getAll(params)
             .then((response) => {
                 const employees  = response.data.items;
                 const totalPages = response.data.totalPages;
                 setEmployees(employees);
                 setCount(totalPages);
-
-
             })
             .catch((e) => {
                 console.log(e);
             });
+
     };
 
     useEffect(retrieveEmployees, [page, pageSize]);
@@ -129,13 +127,7 @@ const EmployeeList = (props) => {
     };
 
     const findByEmail = () => {
-        // EmployeeDataService.findByEmail(searchEmail)
-        //     .then((response) => {
-        //         setEmployees(response.data.items);
-        //     })
-        //     .catch((e) => {
-        //         console.log(e);
-        //     });
+        getRequestParams(searchEmail);
         setPage(1);
         retrieveEmployees();
     };
@@ -217,6 +209,8 @@ const EmployeeList = (props) => {
         try {
             EmployeeDataService.upload(file).then((response)=>{
                 console.log(response.data);
+                alert(response.data.message);
+                window.location.reload();
                 refreshList();
             })
         } catch (ex) {

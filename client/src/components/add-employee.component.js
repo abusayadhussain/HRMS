@@ -10,6 +10,7 @@ const AddEmployee = () => {
     };
     const [employee, setEmployee] = useState(initialEmployeeState);
     const [submitted, setSubmitted] = useState(false);
+    const [message, setMessage] = useState("");
 
     const handleInputChange = event => {
         const { name, value } = event.target;
@@ -25,17 +26,27 @@ const AddEmployee = () => {
 
         EmployeeDataService.create(data)
             .then(response => {
-                setEmployee({
-                    id: response.data.id,
-                    firstName: response.data.firstName,
-                    lastName: response.data.lastName,
-                    email: response.data.email
-                });
-                setSubmitted(true);
-                console.log(response.data);
+                console.log(response.data.message)
+                if(response.data.message){
+                    setMessage(response.data.message);
+                    setSubmitted(false);
+                }else{
+                    setEmployee({
+                        id: response.data.id,
+                        firstName: response.data.firstName,
+                        lastName: response.data.lastName,
+                        email: response.data.email
+                    });
+                    console.log(response);
+                    setSubmitted(true);
+                    console.log(response.data);
+                }
+
+
             })
             .catch(e => {
-                console.log(e);
+                console.log(e.message);
+
             });
     };
 
@@ -55,8 +66,9 @@ const AddEmployee = () => {
                 </div>
             ) : (
                 <div>
+                    <h3 className="text-justify align-center">Add Employee</h3>
                     <div className="form-group">
-                        <label htmlFor="firstName">First Name</label>
+                        <label htmlFor="firstName">First Name (Required)</label>
                         <input
                             type="text"
                             className="form-control"
@@ -69,7 +81,7 @@ const AddEmployee = () => {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="lastName">Last Name</label>
+                        <label htmlFor="lastName">Last Name (Required)</label>
                         <input
                             type="text"
                             className="form-control"
@@ -82,9 +94,9 @@ const AddEmployee = () => {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="email">Email (Required)</label>
                         <input
-                            type="text"
+                            type="email"
                             className="form-control"
                             id="email"
                             required
@@ -93,7 +105,9 @@ const AddEmployee = () => {
                             name="email"
                         />
                     </div>
-
+                    <div>
+                        { message ? message: null }
+                    </div>
                     <button onClick={saveEmployee} className="btn btn-success">
                         Submit
                     </button>

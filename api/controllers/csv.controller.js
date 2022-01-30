@@ -22,23 +22,43 @@ exports.upload = async (req, res) => {
                 employees.push(row);
             })
             .on("end", () => {
-                Employee.bulkCreate(employees)
-                    .then(() => {
+                // Employee.bulkCreate(employees)
+                //     .then(() => {
+                //         res.status(200).send({
+                //             message:
+                //                 "Uploaded the file successfully: " + req.file.originalname,
+                //         });
+                //
+                //     })
+                let countSuccess = 0;
+                let countError = 0;
+                let count = 0;
+                employees.map( async employee => {
+                    try{
+                        const createEmployee = await Employee.create(employee);
+                        console.log('createEmployee-------->', createEmployee.dataValues);
+                        if(createEmployee.dataValues){
+                            countSuccess++
+                            count++;
+                        }
+                    }catch(err) {
+                        console.log(err.message);
+                        countError++;
+                        count++;
+                    }
+
+                    if(employees.length === count){
                         res.status(200).send({
-                            message:
-                                "Uploaded the file successfully: " + req.file.originalname,
+                            message: `${countSuccess} employee record saved to database. ${countError} failed to save`,
                         });
-                    })
-                    .catch((error) => {
-                        res.status(500).send({
-                            message: "Fail to import data into database!",
-                            error: error.message,
-                        });
-                    });
+                    }
+                });
             });
+
+        fs.unlinkSync(path);
     } catch (error) {
         console.log(error);
-        res.status(500).send({
+        res.status(200).send({
             message: "Could not upload the file: " + req.file.originalname,
         });
     }

@@ -35,7 +35,7 @@ const Employee = props => {
         EmployeeDataService.update(currentEmployee.id, currentEmployee)
             .then(response => {
                 console.log(response.data);
-                setMessage("The employee was updated successfully!");
+                setMessage("The employee updated successfully!");
             })
             .catch(e => {
                 console.log(e);
@@ -57,8 +57,8 @@ const Employee = props => {
         <div>
             {currentEmployee ? (
                 <div className="edit-form">
-                    <h4>Employee</h4>
-                    <form>
+                    <h3 className="text-justify align-center">Update Employee</h3>
+                    <form className="mb-2">
                         <div className="form-group">
                             <label htmlFor="firstName">firstName</label>
                             <input
@@ -95,14 +95,12 @@ const Employee = props => {
                             />
                         </div>
                     </form>
-
-                        <button className="badge badge-danger mr-2" onClick={deleteEmployee}>
+                    <button className="btn btn-danger btn-space" onClick={deleteEmployee}>
                             Delete
-                        </button>
-
-                        <button
+                    </button>
+                    <button
                             type="submit"
-                            className="badge badge-success"
+                            className="btn btn-primary"
                             onClick={updateEmployee}
                         >
                             Update

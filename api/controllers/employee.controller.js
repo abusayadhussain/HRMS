@@ -7,12 +7,25 @@ const { getPagination, getPagingData } = require('../helpers/pagination.helper')
 // Create and Save a new Tutorial
     exports.create = (req, res) => {
         // Validate request
-        if (!req.body.email || !req.body.firstName || !req.body.lastName) {
-            res.status(400).send({
-                message: "Content can not be empty!"
+        if (!req.body.firstName) {
+            res.status(200).send({
+                message: "First Name can not be empty!"
             });
             return;
         }
+        if (!req.body.lastName) {
+            res.status(200).send({
+                message: "Last Name can not be empty!"
+            });
+            return;
+        }
+        if (!req.body.email) {
+            res.status(200).send({
+                message: "Email can not be empty!"
+            });
+            return;
+        }
+
 
         // Create a Tutorial
         const employee = {
@@ -27,7 +40,7 @@ const { getPagination, getPagingData } = require('../helpers/pagination.helper')
                 res.send(data);
             })
             .catch(err => {
-                res.status(500).send({
+                res.status(200).send({
                 message:
                     err.message || "Some error occurred while creating Employee."
             });
@@ -104,8 +117,8 @@ exports.sendMail = (req, res) => {
         host: 'smtp.mailtrap.io',
         port: 2525,
         auth: {
-            user: process.env.USERNAME,
-            pass: process.env.PASSWORD
+            user: process.env.MAILTRAPUSER,
+            pass: process.env.MAILTRAPPASSWORD
         }
     });
     const mailList = [];
@@ -115,7 +128,7 @@ exports.sendMail = (req, res) => {
     });
     mailList.push();
     const message = {
-        from: process.env.FROMMAIL, // Sender address
+        from: process.env.MAILTRAPFROMMAIL, // Sender address
         to: mailList,         // List of recipients
         subject: req.body.subject, // Subject line
         html: `
