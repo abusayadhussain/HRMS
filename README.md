@@ -27,6 +27,8 @@ First go to the client folder then simply by running
 - run `npm start`
 - App will open at [http://localhost:8080](http://localhost:8080)
 
+## Connect to the database
+api/config/db.config.js has all the information to connect to the mysql database
 
 ## Run the client
 - cd client
